@@ -1,4 +1,4 @@
-package com.example.accountmanagementservice.domain;
+package com.example.accountmanagementservice.type;
 
 public enum AccountStatus {
     IN_USE,  // 사용중

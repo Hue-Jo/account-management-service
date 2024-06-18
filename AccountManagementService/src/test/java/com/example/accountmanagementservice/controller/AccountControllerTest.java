@@ -1,7 +1,7 @@
 package com.example.accountmanagementservice.controller;
 
 import com.example.accountmanagementservice.domain.Account;
-import com.example.accountmanagementservice.domain.AccountStatus;
+import com.example.accountmanagementservice.type.AccountStatus;
 import com.example.accountmanagementservice.service.AccountService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
