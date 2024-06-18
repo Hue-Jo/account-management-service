@@ -20,6 +20,7 @@ public class CreateAccount {
         private Long initialBalance; // 초기 액수
     }
 
+
     @Getter
     @Setter
     @NoArgsConstructor
@@ -29,5 +30,13 @@ public class CreateAccount {
         private Long userId; // 사용자 아이디
         private String accountNumber; // 계좌 번호
         private LocalDateTime registeredAt; // 등록일시
+
+        public static Response from(AccountDto accountDto) {
+            return Response.builder()
+                    .userId(accountDto.getUserId())
+                    .accountNumber(accountDto.getAccountNumber())
+                    .registeredAt(accountDto.getRegisteredAt())
+                    .build();
+        }
     }
 }

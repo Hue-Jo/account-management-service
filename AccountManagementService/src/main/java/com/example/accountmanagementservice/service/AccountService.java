@@ -2,6 +2,7 @@ package com.example.accountmanagementservice.service;
 
 import com.example.accountmanagementservice.domain.Account;
 import com.example.accountmanagementservice.domain.AccountUser;
+import com.example.accountmanagementservice.dto.AccountDto;
 import com.example.accountmanagementservice.exception.AccountException;
 import com.example.accountmanagementservice.repository.AccountRepository;
 import com.example.accountmanagementservice.repository.AccountUserRepository;
@@ -25,27 +26,31 @@ public class AccountService {
     /**
      * 사용자 존재여부 조회
      * 계좌번호 생성
-     * 계좌 저장, 정보 넘기기
+     * 계좌 저장, 정보 리턴
      */
     @Transactional
-    public Account createAccount(Long userId, Long initialBalance) {
+    public AccountDto createAccount(Long userId, Long initialBalance) {
+
         AccountUser accountUser = accountUserRepository.findById(userId)
                 .orElseThrow(() -> new AccountException(ErrorCode.USER_NOT_FOUND));
 
+
         String newAccountNumber = accountRepository.findFirstByOrderByIdDesc()
-                .map(account -> (Integer.parseInt(account.getAccountNumber())) + 1 + "")
+                .map(account -> (Integer.parseInt(account.getAccountNumber())) + 1 + "") // 1 더한 후 문자화
                 .orElse("1000000000"); // 현재 계좌가 하나도 없을 경우, 10자리
 
-        return accountRepository.save(
-                Account.builder()
-                        .accountUser(accountUser)
-                        .accountStatus(IN_USE)
-                        .accountNumber(newAccountNumber)
-                        .balance(initialBalance)
-                        .registeredAt(LocalDateTime.now())
-                        .build()
-        );
 
+        return AccountDto.fromEntity(
+                accountRepository.save(
+                        Account.builder()
+                                .accountUser(accountUser)
+                                .accountStatus(IN_USE)
+                                .accountNumber(newAccountNumber)
+                                .balance(initialBalance)
+                                .registeredAt(LocalDateTime.now())
+                                .build()
+                )
+        );
     }
 
     @Transactional

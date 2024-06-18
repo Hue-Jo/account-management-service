@@ -1,6 +1,7 @@
 package com.example.accountmanagementservice.controller;
 
 import com.example.accountmanagementservice.domain.Account;
+import com.example.accountmanagementservice.dto.AccountDto;
 import com.example.accountmanagementservice.dto.CreateAccount;
 import com.example.accountmanagementservice.service.AccountService;
 import com.example.accountmanagementservice.service.RedisTestService;
@@ -19,9 +20,11 @@ public class AccountController {
     public CreateAccount.Response createAccount(
         @RequestBody @Valid CreateAccount.Request request
     ) {
-        accountService.createAccount(request.getUserId(),
-                request.getInitialBalance());
-        return "계좌가 생성되었습니다";
+        return CreateAccount.Response.from(
+                accountService.createAccount(
+                    request.getUserId(),
+                    request.getInitialBalance())
+        );
     }
 
     @GetMapping("/account/{id}")
