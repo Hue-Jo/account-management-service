@@ -1,6 +1,10 @@
 spring.application.name: AccountManagementService
 
 spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
   datasource:
     url: jdbc:h2:mem:test
     username: sa
