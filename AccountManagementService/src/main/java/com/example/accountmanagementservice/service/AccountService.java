@@ -6,6 +6,7 @@ import com.example.accountmanagementservice.dto.AccountDto;
 import com.example.accountmanagementservice.exception.AccountException;
 import com.example.accountmanagementservice.repository.AccountRepository;
 import com.example.accountmanagementservice.repository.AccountUserRepository;
+import com.example.accountmanagementservice.type.AccountStatus;
 import com.example.accountmanagementservice.type.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -54,7 +55,7 @@ public class AccountService {
     }
 
     private void validateCreateAccount(AccountUser accountUser) {
-        if(accountRepository.countByAccountUser(accountUser) == 10){
+        if (accountRepository.countByAccountUser(accountUser) == 10) {
             throw new AccountException(ErrorCode.MAX_ACCOUNT_PER_USER_10);
         }
     }
@@ -67,4 +68,38 @@ public class AccountService {
         return accountRepository.findById(id).get();
     }
 
+
+    @Transactional
+    public AccountDto deleteAccount(Long userId, String accountNumber) {
+
+        AccountUser accountUser = accountUserRepository.findById(userId)
+                .orElseThrow(() -> new AccountException(ErrorCode.USER_NOT_FOUND));
+
+        Account account = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+
+        validateDeleteAccount(accountUser, account);
+
+
+        account.setAccountStatus(AccountStatus.UNREGISTERED);
+        account.setUnRegisteredAt(LocalDateTime.now());
+
+
+        accountRepository.save(account);
+
+        return AccountDto.fromEntity(account);
+    }
+
+    private void validateDeleteAccount(AccountUser accountUser, Account account) {
+        if (accountUser.getId() != account.getAccountUser().getId()) {
+            throw new AccountException(ErrorCode.USER_AND_ACCOUNT_UNMATCH);
+        }
+        if (account.getAccountStatus() == AccountStatus.UNREGISTERED) {
+            throw new AccountException(ErrorCode.ACCOUNT_ALREADY_UNREGISTERED);
+        }
+        if (account.getBalance() > 0) {
+            throw new AccountException(ErrorCode.BALANCE_NOT_EMPTY);
+        }
+    }
 }
