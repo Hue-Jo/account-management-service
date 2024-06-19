@@ -6,7 +6,6 @@ import com.example.accountmanagementservice.dto.AccountDto;
 import com.example.accountmanagementservice.exception.AccountException;
 import com.example.accountmanagementservice.repository.AccountRepository;
 import com.example.accountmanagementservice.repository.AccountUserRepository;
-import com.example.accountmanagementservice.type.AccountStatus;
 import com.example.accountmanagementservice.type.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +33,7 @@ public class AccountService {
         AccountUser accountUser = accountUserRepository.findById(userId)
                 .orElseThrow(() -> new AccountException(ErrorCode.USER_NOT_FOUND));
 
+        validateCreateAccount(accountUser);
 
         String newAccountNumber = accountRepository.findFirstByOrderByIdDesc()
                 .map(account -> (Integer.parseInt(account.getAccountNumber())) + 1 + "") // 1 더한 후 문자화
@@ -51,6 +51,12 @@ public class AccountService {
                                 .build()
                 )
         );
+    }
+
+    private void validateCreateAccount(AccountUser accountUser) {
+        if(accountRepository.countByAccountUser(accountUser) == 10){
+            throw new AccountException(ErrorCode.MAX_ACCOUNT_PER_USER_10);
+        }
     }
 
     @Transactional
