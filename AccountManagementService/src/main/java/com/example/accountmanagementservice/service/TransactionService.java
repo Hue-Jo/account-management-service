@@ -1,7 +1,9 @@
 package com.example.accountmanagementservice.service;
 
+import com.example.accountmanagementservice.controller.AccountController;
 import com.example.accountmanagementservice.domain.Account;
 import com.example.accountmanagementservice.domain.AccountUser;
+import com.example.accountmanagementservice.domain.Transaction;
 import com.example.accountmanagementservice.dto.TransactionDto;
 import com.example.accountmanagementservice.exception.AccountException;
 import com.example.accountmanagementservice.repository.AccountRepository;
@@ -9,12 +11,19 @@ import com.example.accountmanagementservice.repository.AccountUserRepository;
 import com.example.accountmanagementservice.repository.TransactionRepository;
 import com.example.accountmanagementservice.type.AccountStatus;
 import com.example.accountmanagementservice.type.ErrorCode;
+import com.example.accountmanagementservice.type.TransactionResultType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
+
+import static com.example.accountmanagementservice.type.TransactionResultType.F;
+import static com.example.accountmanagementservice.type.TransactionResultType.S;
+import static com.example.accountmanagementservice.type.TransactionType.USE;
 
 @Slf4j
 @Service
@@ -23,6 +32,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountUserRepository accountUserRepository;
     private final AccountRepository accountRepository;
+    private final AccountController accountController;
 
     /**
      * 사용자가 없을 시, 사용자 아이디와 계좌 소유주가 다를 시,
@@ -40,10 +50,15 @@ public class TransactionService {
                 .orElseThrow(() -> new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         validateUseBalance(user, account, amount);
+
+        account.useBalance(amount);
+
+        return TransactionDto.fromEntity(saveAndGetTransaction(S, account, amount)
+        );
     }
 
     private void validateUseBalance(AccountUser user, Account account, Long amount) {
-        if(!Objects.equals(user.getId(), account.getAccountUser().getId())) {
+        if (!Objects.equals(user.getId(), account.getAccountUser().getId())) {
             throw new AccountException(ErrorCode.USER_AND_ACCOUNT_UNMATCH);
         }
         if (account.getAccountStatus() != AccountStatus.IN_USE) {
@@ -54,4 +69,28 @@ public class TransactionService {
         }
     }
 
+    @Transactional
+    public void saveFailedUseTransaction(String accountNumber, Long amount) {
+
+        Account account = accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        saveAndGetTransaction(F, account, amount);
+    }
+
+    private Transaction saveAndGetTransaction(
+            TransactionResultType transactionResultType,
+            Account account, Long amount) {
+        return transactionRepository.save(
+                Transaction.builder()
+                        .transactionType(USE)
+                        .transactionResultType(transactionResultType)
+                        .account(account)
+                        .amount(amount)
+                        .balanceSnapshot(account.getBalance())
+                        .transactionId(UUID.randomUUID().toString().replace("-", ""))
+                        .transactedAt(LocalDateTime.now())
+                        .build()
+        );
+    }
 }

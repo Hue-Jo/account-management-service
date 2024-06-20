@@ -42,6 +42,16 @@ public class UseBalance {
         private String transactionId; // 계좌 번호
         private Long amount;
         private LocalDateTime transactedAt;
+
+        public static Response from(TransactionDto transactionDto) {
+            return Response.builder()
+                    .accountNumber(transactionDto.getAccountNumber())
+                    .transactionResult(transactionDto.getTransactionResultType())
+                    .transactionId(transactionDto.getTransactionId())
+                    .transactedAt(transactionDto.getTransactedAt())
+                    .amount(transactionDto.getAmount())
+                    .build();
+        }
     }
 }
 
