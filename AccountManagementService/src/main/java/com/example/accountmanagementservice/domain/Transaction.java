@@ -1,6 +1,5 @@
 package com.example.accountmanagementservice.domain;
 
-import com.example.accountmanagementservice.type.AccountStatus;
 import com.example.accountmanagementservice.type.TransactionResultType;
 import com.example.accountmanagementservice.type.TransactionType;
 import jakarta.persistence.*;
@@ -15,7 +14,6 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)

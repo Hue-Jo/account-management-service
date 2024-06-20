@@ -1,6 +1,5 @@
 package com.example.accountmanagementservice.dto;
 
-import com.example.accountmanagementservice.domain.Account;
 import com.example.accountmanagementservice.domain.Transaction;
 import com.example.accountmanagementservice.type.TransactionResultType;
 import com.example.accountmanagementservice.type.TransactionType;
@@ -10,8 +9,8 @@ import java.time.LocalDateTime;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class TransactionDto {
     private String accountNumber;
