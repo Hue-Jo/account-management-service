@@ -4,8 +4,10 @@ import com.example.accountmanagementservice.domain.Account;
 import com.example.accountmanagementservice.dto.AccountDto;
 import com.example.accountmanagementservice.dto.CreateAccount;
 import com.example.accountmanagementservice.dto.DeleteAccount;
+import com.example.accountmanagementservice.exception.AccountException;
 import com.example.accountmanagementservice.type.AccountStatus;
 import com.example.accountmanagementservice.service.AccountService;
+import com.example.accountmanagementservice.type.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -135,6 +137,20 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$.userId").value(1))
                 .andExpect(jsonPath("$.accountNumber").value("1234567890"))
                 .andDo(print());
+    }
+
+    @Test
+    void failGetAccount() throws Exception {
+        //given
+        given(accountService.getAccount(anyLong()))
+                .willThrow(new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
+        //when
+        //then
+        mockMvc.perform(get("/account/876"))
+                .andDo(print())
+                .andExpect(jsonPath("$.errorCode").value("ACCOUNT_NOT_FOUND"))
+                .andExpect(jsonPath("$.errorMessage").value("해당 계좌가 존재하지 않습니다."))
+                .andExpect(status().isOk());
     }
 
 }
