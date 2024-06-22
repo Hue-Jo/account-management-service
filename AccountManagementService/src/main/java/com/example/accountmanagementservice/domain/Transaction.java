@@ -2,11 +2,11 @@ package com.example.accountmanagementservice.domain;
 
 import com.example.accountmanagementservice.type.TransactionResultType;
 import com.example.accountmanagementservice.type.TransactionType;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.ManyToOne;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -16,16 +16,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Transaction {
-
-    @Id // pk지정
-    @GeneratedValue
-    private Long id;
-
+public class Transaction extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
-
     @Enumerated(EnumType.STRING)
     private TransactionResultType transactionResultType;
 
@@ -36,10 +29,5 @@ public class Transaction {
 
     private String transactionId; // 거래고유 아이디
     private LocalDateTime transactedAt; //
-
-    @CreatedDate
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
 }

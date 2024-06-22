@@ -2,7 +2,6 @@ package com.example.accountmanagementservice.service;
 
 import com.example.accountmanagementservice.dto.UseBalance;
 import com.example.accountmanagementservice.exception.AccountException;
-import com.example.accountmanagementservice.type.ErrorCode;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.example.accountmanagementservice.type.ErrorCode.ACCOUNT_NOT_FOUND;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

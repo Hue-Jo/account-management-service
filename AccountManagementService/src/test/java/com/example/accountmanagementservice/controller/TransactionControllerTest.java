@@ -5,9 +5,6 @@ import com.example.accountmanagementservice.dto.CancelBalance;
 import com.example.accountmanagementservice.dto.TransactionDto;
 import com.example.accountmanagementservice.dto.UseBalance;
 import com.example.accountmanagementservice.service.TransactionService;
-import com.example.accountmanagementservice.type.TransactionResultType;
-import com.example.accountmanagementservice.type.TransactionType;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +17,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.example.accountmanagementservice.type.TransactionResultType.*;
+import static com.example.accountmanagementservice.type.TransactionResultType.S;
 import static com.example.accountmanagementservice.type.TransactionType.USE;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -57,11 +53,11 @@ class TransactionControllerTest {
         //when
         //then
         mockMvc.perform(post("/transaction/use")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(
-                        new UseBalance.Request(1L, "2000000000", 3000L))
-                )
-        ).andDo(print())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                new UseBalance.Request(1L, "2000000000", 3000L))
+                        )
+                ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accountNumber").value("1000000000"))
                 .andExpect(jsonPath("$.transactionResult").value("S"))
@@ -117,13 +113,13 @@ class TransactionControllerTest {
 
         given(transactionService.queryTransaction(anyString()))
                 .willReturn(TransactionDto.builder()
-                                .accountNumber("1000000000")
+                        .accountNumber("1000000000")
                         .transactionType(USE)
-                                .transactedAt(LocalDateTime.now())
-                                .amount(54321L)
-                                .transactionId("transactionIdForCancel")
-                                .transactionResultType(S)
-                                .build());
+                        .transactedAt(LocalDateTime.now())
+                        .amount(54321L)
+                        .transactionId("transactionIdForCancel")
+                        .transactionResultType(S)
+                        .build());
         //when
         //then
         mockMvc.perform(get("/transaction/12345"))
